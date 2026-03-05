@@ -41,7 +41,7 @@ const App = () => {
 
         setFormData({
             ...user,
-            _id: user._id.toString()   // 🔥 important fix
+            _id: user._id.toString()
         });
 
         setIsEdit(true);
@@ -74,7 +74,6 @@ const App = () => {
         );
     }
 
-    
     function saveUser(){
         let data = JSON.stringify({
             firstname: formData.firstname,
@@ -85,6 +84,13 @@ const App = () => {
         });
 
         callApi("POST", APIURL + "users/saveuser", data, saveResponse);
+    }
+
+    // FIX 1: Added missing response handler
+    function saveResponse(res){
+        alert(res.msg);
+        setIsEdit(false);
+        loadUsersList();
     }
 
     return (
@@ -103,6 +109,7 @@ const App = () => {
                             <th></th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {usersData.map((user, index) => (
                             <tr key={index}>
@@ -111,6 +118,7 @@ const App = () => {
                                 <td>{user.lastname}</td>
                                 <td>{user.mobile}</td>
                                 <td>{user.email}</td>
+
                                 <td>
                                     <img src={IMGURL + "edit.png"} alt="" onClick={() => editUser(index)} />
                                     <img src={IMGURL + "bin.png"} alt="" onClick={() => deleteUser(user._id)} />
@@ -131,10 +139,9 @@ const App = () => {
                     <div className='panel'>
                         <span onClick={closeEdit}>&times;</span>
 
+                        {/* FIX 2: Correct title logic */}
                         <h3>
-                            {formData._id === ""
-                                ? "Add New User"
-                                : "Edit User"}
+                            {formData._id ? "Edit User" : "Add New User"}
                         </h3>
 
                         <label>First Name</label>
@@ -173,6 +180,7 @@ const App = () => {
                             ? <button onClick={updateUser}>Update</button>
                             : <button onClick={saveUser}>Save</button>
                         }
+
                     </div>
                 </div>
             }
